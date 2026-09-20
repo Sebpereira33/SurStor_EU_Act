@@ -1,8 +1,10 @@
 import Reveal from '@/components/Reveal'
 import LogStream from '@/components/LogStream'
 import Countdown from '@/components/Countdown'
+import { useLanguage } from '@/i18n'
 
 export default function Hero() {
+  const { t } = useLanguage()
   return (
     <section id="top" className="noise relative overflow-hidden pt-32 pb-20 sm:pt-40 sm:pb-28">
       <div className="grid-overlay absolute inset-0" aria-hidden="true" />
@@ -22,24 +24,21 @@ export default function Hero() {
               style={{ border: '1px solid var(--line-strong)', color: 'var(--text-2)', background: 'rgba(22,36,58,0.7)' }}
             >
               <span className="pulse-dot inline-block h-1.5 w-1.5 rounded-full" style={{ background: 'var(--signal)' }} />
-              Regulation (EU) 2024/1689 · Article 12
+              {t('heroBadge')}
             </div>
           </Reveal>
 
           <Reveal i={1}>
             <h1 className="font-display text-5xl leading-[1.02] font-bold sm:text-6xl lg:text-[4.4rem]">
-              Every AI decision,
+              {t('heroTitleA')}
               <br />
-              <span className="signal-text signal-glow">on the record.</span>
+              <span className="signal-text signal-glow">{t('heroTitleB')}</span>
             </h1>
           </Reveal>
 
           <Reveal i={2}>
             <p className="mt-7 max-w-[52ch] text-lg leading-relaxed" style={{ color: 'var(--text-2)' }}>
-              Article 12 of the EU AI Act obliges high-risk AI systems to record events automatically, over their
-              entire lifetime. SurStor is the record-keeping layer built for exactly that — tamper-evident log
-              pools, hosted on EU-sovereign infrastructure. And beyond compliance: every output you create with
-              any tool or model becomes your property, portable between them, allocated wherever you choose.
+              {t('heroBody')}
             </p>
           </Reveal>
 
@@ -50,7 +49,7 @@ export default function Hero() {
                 className="cta-breathe rounded px-6 py-3.5 font-mono2 text-sm font-bold uppercase tracking-[0.08em] transition-transform active:scale-95"
                 style={{ background: 'var(--signal)', color: '#0c1626' }}
               >
-                Find your workflow →
+                {t('heroWorkflow')}
               </a>
               <a
                 href="#article-12"
@@ -59,7 +58,7 @@ export default function Hero() {
                 onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--signal)')}
                 onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--line-strong)')}
               >
-                Read the obligation
+                {t('heroObligation')}
               </a>
             </div>
           </Reveal>
@@ -68,10 +67,10 @@ export default function Hero() {
             <div className="hairline-t mt-12 pt-6">
               <div className="mb-3 flex items-baseline justify-between gap-4">
                 <span className="font-mono2 text-[10px] uppercase tracking-[0.2em]" style={{ color: 'var(--text-3)' }}>
-                  Art. 12 in force for Annex III systems
+                  {t('heroInForce')}
                 </span>
                 <span className="font-mono2 text-[10px] uppercase tracking-[0.2em]" style={{ color: 'var(--signal)' }}>
-                  since 02 Aug 2026
+                  {t('heroSince')}
                 </span>
               </div>
               <Countdown />
@@ -105,7 +104,7 @@ export default function Hero() {
                   className="pulse-dot rounded px-1.5 py-0.5 font-mono2 text-[9px] font-bold uppercase tracking-wider"
                   style={{ background: 'rgba(130,180,216,0.12)', color: 'var(--pass)' }}
                 >
-                  live
+                  {t('heroLive')}
                 </span>
               </div>
               <div className="p-4 sm:p-5">
@@ -115,17 +114,17 @@ export default function Hero() {
                 className="flex items-center justify-between px-4 py-2.5 font-mono2 text-[9px] uppercase tracking-[0.16em]"
                 style={{ borderTop: '1px solid var(--line)', color: 'var(--text-3)' }}
               >
-                <span>hash-chained · append-only</span>
-                <span>retention ≥ 183 days</span>
+                <span>{t('heroHash')}</span>
+                <span>{t('heroRetention')}</span>
               </div>
             </div>
 
             {/* mini integrity strip */}
             <div className="mt-4 grid grid-cols-3 gap-3">
               {[
-                { k: 'seq', v: '481,204' },
-                { k: 'merkle root', v: 'f0c3…77aa' },
-                { k: 'Example region', v: 'DE-FRA-1' },
+                { k: t('heroSeq'), v: '481,204' },
+                { k: t('heroMerkle'), v: 'f0c3…77aa' },
+                { k: t('heroRegion'), v: 'DE-FRA-1' },
               ].map((s) => (
                 <div key={s.k} className="rounded-md px-3 py-2.5" style={{ background: 'var(--surface)', border: '1px solid var(--line)' }}>
                   <div className="font-mono2 text-[9px] uppercase tracking-[0.16em]" style={{ color: 'var(--text-3)' }}>

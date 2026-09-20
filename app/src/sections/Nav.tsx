@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react'
 import Countdown from '@/components/Countdown'
-
-const LINKS = [
-  { href: '#article-12', label: 'Article 12' },
-  { href: '#journey', label: 'Your workflow' },
-  { href: '#ownership', label: 'Ownership' },
-  { href: '#demo', label: 'Demo' },
-  { href: '#quickstart', label: 'Developers' },
-  { href: '#faq', label: 'FAQ' },
-]
+import { useLanguage } from '@/i18n'
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
+  const { t } = useLanguage()
+  const links = [
+    { href: '#article-12', label: t('navArticle') },
+    { href: '#journey', label: t('navWorkflow') },
+    { href: '#ownership', label: t('navOwnership') },
+    { href: '#demo', label: t('navDemo') },
+    { href: '#quickstart', label: t('navDevelopers') },
+    { href: '#faq', label: t('navFaq') },
+  ]
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24)
@@ -36,7 +37,7 @@ export default function Nav() {
         </a>
 
         <nav className="hidden items-center gap-7 md:flex">
-          {LINKS.map((l) => (
+          {links.map((l) => (
             <a
               key={l.href}
               href={l.href}
@@ -62,7 +63,7 @@ export default function Nav() {
             className="cta-breathe rounded px-4 py-2 font-mono2 text-xs font-bold uppercase tracking-[0.1em] transition-transform active:scale-95"
             style={{ background: 'var(--signal)', color: '#0c1626' }}
           >
-            Request Access
+            {t('requestAccess')}
           </a>
         </div>
       </div>

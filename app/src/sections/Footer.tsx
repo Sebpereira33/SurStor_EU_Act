@@ -1,7 +1,9 @@
 import { useState, type FormEvent } from 'react'
 import Reveal from '@/components/Reveal'
+import { useLanguage } from '@/i18n'
 
 export function CTA() {
+  const { t } = useLanguage()
   const [email, setEmail] = useState('')
 
   const submit = (e: FormEvent) => {
@@ -21,20 +23,19 @@ export function CTA() {
       <div className="relative mx-auto max-w-3xl px-5 text-center sm:px-8">
         <Reveal i={0}>
           <div className="font-mono2 text-xs uppercase tracking-[0.24em]" style={{ color: 'var(--signal)' }}>
-            07 / Get ready
+            {t('ctaEyebrow')}
           </div>
         </Reveal>
         <Reveal i={1}>
           <h2 className="font-display mt-5 text-5xl leading-[1.02] font-bold sm:text-6xl">
-            Be auditable.
+            {t('ctaTitleA')}
             <br />
-            <span className="signal-text signal-glow">Starting today.</span>
+            <span className="signal-text signal-glow">{t('ctaTitleB')}</span>
           </h2>
         </Reveal>
         <Reveal i={2}>
           <p className="mx-auto mt-6 max-w-[50ch] text-lg leading-relaxed" style={{ color: 'var(--text-2)' }}>
-            Article 12 is not a policy you write — it is infrastructure you run, and it is already in force.
-            SurStor onboards EU teams in days, with record-keeping live before your next deployment.
+            {t('ctaBody')}
           </p>
         </Reveal>
         <Reveal i={3}>
@@ -44,7 +45,7 @@ export function CTA() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="work email"
+              placeholder={t('ctaPlaceholder')}
               className="h-12 flex-1 rounded px-4 font-mono2 text-sm outline-none"
               style={{ background: 'var(--surface)', border: '1px solid var(--line-strong)', color: 'var(--text-1)' }}
             />
@@ -53,13 +54,13 @@ export function CTA() {
               className="cta-breathe h-12 rounded px-6 font-mono2 text-sm font-bold uppercase tracking-[0.08em] transition-transform active:scale-95"
               style={{ background: 'var(--signal)', color: '#0c1626' }}
             >
-              Request access
+              {t('ctaButton')}
             </button>
           </form>
         </Reveal>
         <Reveal i={4}>
           <p className="mt-5 font-mono2 text-[10px] uppercase tracking-[0.18em]" style={{ color: 'var(--text-3)' }}>
-            eu regions only · no credit card · dpa on day one
+            {t('ctaFine')}
           </p>
         </Reveal>
       </div>
@@ -68,18 +69,19 @@ export function CTA() {
 }
 
 export function Footer() {
+  const { t } = useLanguage()
   const cols = [
     {
-      h: 'Platform',
-      links: ['Log pools', 'Retention engine', 'Authority export', 'Agent pools', 'Portable memory', 'Status'],
+      h: 'footerPlatform',
+      links: ['footerLogPools', 'footerRetention', 'footerExport', 'footerAgents', 'footerPortable', 'footerStatus'],
     },
     {
-      h: 'Compliance',
-      links: ['Article 12 guide', 'Art. 26(6) retention', 'GDPR interplay', 'Art. 99 penalties', 'Trust center'],
+      h: 'footerCompliance',
+      links: ['footerGuide', 'footerRetentionGuide', 'footerGdpr', 'footerPenalties', 'footerTrust'],
     },
     {
-      h: 'Company',
-      links: ['About', 'EU data residency', 'Careers', 'Contact'],
+      h: 'footerCompany',
+      links: ['footerAbout', 'footerResidency', 'footerCareers', 'footerContact'],
     },
   ]
   return (
@@ -92,18 +94,17 @@ export function Footer() {
               <span className="font-display text-2xl font-bold tracking-tight" style={{ color: 'var(--text-1)' }}>SurStor</span>
             </div>
             <p className="mt-4 max-w-[38ch] text-sm leading-relaxed" style={{ color: 'var(--text-3)' }}>
-              The record-keeping layer for Europe’s AI economy. Decentralized storage, hash-chained logs,
-              EU-sovereign by design.
+              {t('footerDescription')}
             </p>
             <div className="mt-6 flex items-center gap-2 font-mono2 text-[10px] uppercase tracking-[0.16em]" style={{ color: 'var(--text-3)' }}>
               <span className="pulse-dot inline-block h-1.5 w-1.5 rounded-full" style={{ background: 'var(--pass)' }} />
-              all systems operational — de-fra · nl-ams · ie-dub · se-sto
+              {t('footerSystems')}
             </div>
           </div>
           {cols.map((c) => (
             <div key={c.h}>
               <div className="font-mono2 text-[10px] uppercase tracking-[0.2em]" style={{ color: 'var(--text-3)' }}>
-                {c.h}
+                {t(c.h)}
               </div>
               <ul className="mt-4 space-y-2.5">
                 {c.links.map((l) => (
@@ -112,7 +113,7 @@ export function Footer() {
                       onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--signal)')}
                       onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-2)')}
                     >
-                      {l}
+                      {t(l)}
                     </a>
                   </li>
                 ))}
@@ -125,8 +126,7 @@ export function Footer() {
             © 2026 SurStor — built for Regulation (EU) 2024/1689
           </span>
           <span className="max-w-[52ch] text-[11px] leading-relaxed" style={{ color: 'var(--text-3)' }}>
-            SurStor provides record-keeping infrastructure. Content on this site is informational and does not
-            constitute legal advice.
+            {t('footerLegal')}
           </span>
         </div>
       </div>

@@ -12,9 +12,10 @@ import Architecture from '@/sections/Architecture'
 import Timeline from '@/sections/Timeline'
 import FAQ from '@/sections/FAQ'
 import { CTA, Footer } from '@/sections/Footer'
+import { LanguageProvider, LanguageSwitcher } from '@/i18n'
 
 export default function Home() {
-  return (
+  return <LanguageProvider>
     <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
       <Nav />
       <main>
@@ -33,6 +34,7 @@ export default function Home() {
         <CTA />
       </main>
       <Footer />
+      <LanguageSwitcher />
     </div>
-  )
+  </LanguageProvider>
 }
