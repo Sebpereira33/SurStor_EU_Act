@@ -4,43 +4,43 @@
 
 @layer base {
   :root {
-    /* SurStor dark engineering palette */
-    --bg: #0a0b0d;
-    --surface: #121316;
-    --surface-2: #17191d;
-    --line: #262a31;
-    --line-strong: #343943;
+    /* SurStor deep navy and amber palette */
+    --bg: #0c1626;
+    --surface: #16243a;
+    --surface-2: #1e3049;
+    --line: #30445f;
+    --line-strong: #465e7a;
 
-    --signal: #ff9e40;
-    --pass: #5fa8c7;
+    --signal: #ffaa32;
+    --pass: #82b4d8;
     --warn: #d9a24a;
     --fail: #d85c46;
     --eu: #4a6fd8;
 
-    --text-1: #fbfbfb;
-    --text-2: #b8bcc4;
-    --text-3: #69707a;
+    --text-1: #f1f5fa;
+    --text-2: #c5d0df;
+    --text-3: #a0afc3;
 
     /* shadcn tokens mapped onto the palette */
-    --background: 220 13% 5%;
-    --foreground: 0 0% 98%;
-    --card: 220 9% 8%;
-    --card-foreground: 0 0% 98%;
-    --popover: 220 9% 8%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 32 100% 63%;
-    --primary-foreground: 220 13% 5%;
-    --secondary: 220 8% 11%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 220 8% 11%;
-    --muted-foreground: 220 7% 56%;
-    --accent: 220 8% 11%;
-    --accent-foreground: 0 0% 98%;
+    --background: 217 52% 10%;
+    --foreground: 213 47% 96%;
+    --card: 217 45% 16%;
+    --card-foreground: 213 47% 96%;
+    --popover: 217 45% 16%;
+    --popover-foreground: 213 47% 96%;
+    --primary: 35 100% 60%;
+    --primary-foreground: 217 52% 10%;
+    --secondary: 215 42% 20%;
+    --secondary-foreground: 213 47% 96%;
+    --muted: 215 42% 20%;
+    --muted-foreground: 216 23% 70%;
+    --accent: 215 42% 20%;
+    --accent-foreground: 213 47% 96%;
     --destructive: 8 63% 56%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 220 10% 17%;
-    --input: 220 10% 17%;
-    --ring: 32 100% 63%;
+    --destructive-foreground: 213 47% 96%;
+    --border: 215 33% 28%;
+    --input: 215 33% 28%;
+    --ring: 35 100% 60%;
     --radius: 0.375rem;
   }
 }
@@ -61,7 +61,7 @@
     text-rendering: optimizeLegibility;
   }
   ::selection {
-    background: rgba(255, 158, 64, 0.28);
+    background: rgba(255, 170, 50, 0.28);
     color: #fff;
   }
   ::-webkit-scrollbar {
@@ -112,7 +112,7 @@
   color: var(--signal);
 }
 .signal-glow {
-  text-shadow: 0 0 24px rgba(255, 158, 64, 0.35);
+  text-shadow: 0 0 24px rgba(255, 170, 50, 0.35);
 }
 
 .hairline {
@@ -154,10 +154,10 @@
 @keyframes cta-breathe {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(255, 158, 64, 0);
+    box-shadow: 0 0 0 0 rgba(255, 170, 50, 0);
   }
   50% {
-    box-shadow: 0 0 0 6px rgba(255, 158, 64, 0.16);
+    box-shadow: 0 0 0 6px rgba(255, 170, 50, 0.16);
   }
 }
 .cta-breathe {
@@ -207,10 +207,10 @@
 @keyframes dial-pulse {
   0%,
   100% {
-    filter: drop-shadow(0 0 14px rgba(255, 158, 64, 0.16));
+    filter: drop-shadow(0 0 14px rgba(255, 170, 50, 0.16));
   }
   50% {
-    filter: drop-shadow(0 0 22px rgba(255, 158, 64, 0.3));
+    filter: drop-shadow(0 0 22px rgba(255, 170, 50, 0.3));
   }
 }
 .dial-pulse {

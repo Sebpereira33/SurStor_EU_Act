@@ -1,5 +1,9 @@
 import Nav from '@/sections/Nav'
 import Hero from '@/sections/Hero'
+import Journey from '@/sections/Journey'
+import ProductExperience from '@/sections/ProductExperience'
+import HowItWorks from '@/sections/HowItWorks'
+import Quickstart from '@/sections/Quickstart'
 import StatsStrip from '@/sections/StatsStrip'
 import Article12 from '@/sections/Article12'
 import Platform from '@/sections/Platform'
@@ -15,12 +19,16 @@ export default function Home() {
       <Nav />
       <main>
         <Hero />
+        <Journey />
         <StatsStrip />
         <Article12 />
         <Platform />
+        <HowItWorks />
+        <ProductExperience />
         <Portability />
         <Architecture />
         <Timeline />
+        <Quickstart />
         <FAQ />
         <CTA />
       </main>

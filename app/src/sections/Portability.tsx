@@ -10,18 +10,18 @@ function PortabilityDiagram() {
   return (
     <svg viewBox="0 0 980 330" className="w-full" role="img" aria-label="Outputs from many AI tools and models flow into the user's SurStor pool, and from there into any tool, model or destination the user chooses.">
       {/* sources */}
-      <text x={10} y={16} fill="#69707a" fontSize={9} letterSpacing={2} style={mono}>
+      <text x={10} y={16} fill="#a0afc3" fontSize={9} letterSpacing={2} style={mono}>
         OUTPUT COMES FROM
       </text>
       {sources.map((s, i) => {
         const y = 30 + i * 47
         return (
           <g key={s}>
-            <rect x={10} y={y} width={150} height={36} rx={6} fill="#17191d" stroke="#262a31" strokeWidth={1} />
-            <text x={22} y={y + 22} fill="#b8bcc4" fontSize={10.5} style={mono}>
+            <rect x={10} y={y} width={150} height={36} rx={6} fill="#1e3049" stroke="#30445f" strokeWidth={1} />
+            <text x={22} y={y + 22} fill="#c5d0df" fontSize={10.5} style={mono}>
               {s}
             </text>
-            <path d={`M160 ${y + 18} C 260 ${y + 18}, 260 165, 330 165`} fill="none" stroke="#5fa8c7" strokeWidth={1} strokeDasharray="3 5" opacity={0.65}>
+            <path d={`M160 ${y + 18} C 260 ${y + 18}, 260 165, 330 165`} fill="none" stroke="#82b4d8" strokeWidth={1} strokeDasharray="3 5" opacity={0.65}>
               <animate attributeName="stroke-dashoffset" from="16" to="0" dur="1.4s" begin={`${i * 0.15}s`} repeatCount="indefinite" />
             </path>
           </g>
@@ -29,41 +29,41 @@ function PortabilityDiagram() {
       })}
 
       {/* user pool */}
-      <text x={335} y={16} fill="#ff9e40" fontSize={9} letterSpacing={2} style={mono}>
+      <text x={335} y={16} fill="#ffaa32" fontSize={9} letterSpacing={2} style={mono}>
         YOUR SURSTOR POOL — YOU OWN THE KEYS
       </text>
-      <rect x={330} y={90} width={300} height={150} rx={10} fill="#121316" stroke="#ff9e40" strokeOpacity={0.55} strokeWidth={1.25} />
-      <text x={350} y={122} fill="#fbfbfb" fontSize={13} fontWeight={700} style={mono}>
+      <rect x={330} y={90} width={300} height={150} rx={10} fill="#16243a" stroke="#ffaa32" strokeOpacity={0.55} strokeWidth={1.25} />
+      <text x={350} y={122} fill="#f1f5fa" fontSize={13} fontWeight={700} style={mono}>
         portable memory pool
       </text>
-      <text x={350} y={142} fill="#b8bcc4" fontSize={10} style={mono}>
+      <text x={350} y={142} fill="#c5d0df" fontSize={10} style={mono}>
         normalized, encrypted, hash-chained
       </text>
-      <text x={350} y={160} fill="#b8bcc4" fontSize={10} style={mono}>
+      <text x={350} y={160} fill="#c5d0df" fontSize={10} style={mono}>
         owner: you · region: eu · exit: anytime
       </text>
-      <rect x={350} y={176} width={196} height={20} rx={4} fill="rgba(255,158,64,0.1)" />
-      <text x={358} y={190} fill="#ff9e40" fontSize={9} style={mono}>
+      <rect x={350} y={176} width={196} height={20} rx={4} fill="rgba(255,170,50,0.1)" />
+      <text x={358} y={190} fill="#ffaa32" fontSize={9} style={mono}>
         provenance: model + version + timestamp
       </text>
-      <rect x={350} y={204} width={196} height={20} rx={4} fill="rgba(95,168,199,0.1)" />
-      <text x={358} y={218} fill="#5fa8c7" fontSize={9} style={mono}>
+      <rect x={350} y={204} width={196} height={20} rx={4} fill="rgba(130,180,216,0.1)" />
+      <text x={358} y={218} fill="#82b4d8" fontSize={9} style={mono}>
         export: full-fidelity · no lock-in
       </text>
 
       {/* targets */}
-      <text x={780} y={16} fill="#69707a" fontSize={9} letterSpacing={2} style={mono}>
+      <text x={780} y={16} fill="#a0afc3" fontSize={9} letterSpacing={2} style={mono}>
         YOU CHOOSE WHERE IT GOES
       </text>
       {targets.map((t, i) => {
         const y = 30 + i * 47
         return (
           <g key={t}>
-            <path d={`M630 165 C 700 165, 700 ${y + 18}, 780 ${y + 18}`} fill="none" stroke="#ff9e40" strokeWidth={1} strokeDasharray="3 5" opacity={0.65}>
+            <path d={`M630 165 C 700 165, 700 ${y + 18}, 780 ${y + 18}`} fill="none" stroke="#ffaa32" strokeWidth={1} strokeDasharray="3 5" opacity={0.65}>
               <animate attributeName="stroke-dashoffset" from="16" to="0" dur="1.4s" begin={`${i * 0.15}s`} repeatCount="indefinite" />
             </path>
-            <rect x={780} y={y} width={150} height={36} rx={6} fill="#17191d" stroke="#262a31" strokeWidth={1} />
-            <text x={792} y={y + 22} fill="#b8bcc4" fontSize={10.5} style={mono}>
+            <rect x={780} y={y} width={150} height={36} rx={6} fill="#1e3049" stroke="#30445f" strokeWidth={1} />
+            <text x={792} y={y + 22} fill="#c5d0df" fontSize={10.5} style={mono}>
               {t}
             </text>
           </g>

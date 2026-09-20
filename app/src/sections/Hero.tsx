@@ -10,7 +10,7 @@ export default function Hero() {
       <div
         aria-hidden="true"
         className="absolute -top-40 left-1/2 h-[480px] w-[720px] -translate-x-1/2 rounded-full"
-        style={{ background: 'radial-gradient(closest-side, rgba(255,158,64,0.09), transparent)' }}
+        style={{ background: 'radial-gradient(closest-side, rgba(255,170,50,0.09), transparent)' }}
       />
 
       <div className="relative mx-auto grid max-w-7xl gap-14 px-5 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
@@ -19,7 +19,7 @@ export default function Hero() {
           <Reveal i={0}>
             <div
               className="mb-7 inline-flex items-center gap-2.5 rounded-full py-1.5 pr-4 pl-3 font-mono2 text-[11px] uppercase tracking-[0.16em]"
-              style={{ border: '1px solid var(--line-strong)', color: 'var(--text-2)', background: 'rgba(18,19,22,0.7)' }}
+              style={{ border: '1px solid var(--line-strong)', color: 'var(--text-2)', background: 'rgba(22,36,58,0.7)' }}
             >
               <span className="pulse-dot inline-block h-1.5 w-1.5 rounded-full" style={{ background: 'var(--signal)' }} />
               Regulation (EU) 2024/1689 · Article 12
@@ -46,11 +46,11 @@ export default function Hero() {
           <Reveal i={3}>
             <div className="mt-9 flex flex-wrap items-center gap-4">
               <a
-                href="#contact"
+                href="#journey"
                 className="cta-breathe rounded px-6 py-3.5 font-mono2 text-sm font-bold uppercase tracking-[0.08em] transition-transform active:scale-95"
-                style={{ background: 'var(--signal)', color: '#0a0b0d' }}
+                style={{ background: 'var(--signal)', color: '#0c1626' }}
               >
-                Start recording →
+                Find your workflow →
               </a>
               <a
                 href="#article-12"
@@ -85,10 +85,10 @@ export default function Hero() {
             <div
               className="overflow-hidden rounded-xl"
               style={{
-                background: 'rgba(18,19,22,0.86)',
+                background: 'rgba(22,36,58,0.86)',
                 border: '1px solid var(--line)',
                 backdropFilter: 'blur(8px)',
-                boxShadow: '0 24px 80px -32px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,158,64,0.04), 0 0 48px -12px rgba(255,158,64,0.10)',
+                boxShadow: '0 24px 80px -32px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,170,50,0.04), 0 0 48px -12px rgba(255,170,50,0.10)',
               }}
             >
               {/* window chrome */}
@@ -103,7 +103,7 @@ export default function Hero() {
                 </span>
                 <span
                   className="pulse-dot rounded px-1.5 py-0.5 font-mono2 text-[9px] font-bold uppercase tracking-wider"
-                  style={{ background: 'rgba(95,168,199,0.12)', color: 'var(--pass)' }}
+                  style={{ background: 'rgba(130,180,216,0.12)', color: 'var(--pass)' }}
                 >
                   live
                 </span>
@@ -125,7 +125,7 @@ export default function Hero() {
               {[
                 { k: 'seq', v: '481,204' },
                 { k: 'merkle root', v: 'f0c3…77aa' },
-                { k: 'region', v: 'DE-FRA-1' },
+                { k: 'Example region', v: 'DE-FRA-1' },
               ].map((s) => (
                 <div key={s.k} className="rounded-md px-3 py-2.5" style={{ background: 'var(--surface)', border: '1px solid var(--line)' }}>
                   <div className="font-mono2 text-[9px] uppercase tracking-[0.16em]" style={{ color: 'var(--text-3)' }}>

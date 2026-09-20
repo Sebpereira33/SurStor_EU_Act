@@ -68,7 +68,7 @@ export default function Timeline() {
                     style={{
                       background: active ? 'var(--signal)' : m.state === 'done' ? 'var(--pass)' : 'var(--bg)',
                       border: `2px solid ${active ? 'var(--signal)' : m.state === 'done' ? 'var(--pass)' : 'var(--line-strong)'}`,
-                      boxShadow: active ? '0 0 16px rgba(255,158,64,0.5)' : 'none',
+                      boxShadow: active ? '0 0 16px rgba(255,170,50,0.5)' : 'none',
                       marginLeft: '1px',
                     }}
                   />

@@ -77,7 +77,7 @@ export default function Article12() {
                 <div className="flex items-baseline gap-4">
                   <span
                     className="font-mono2 shrink-0 rounded px-2 py-1 text-[11px] font-bold"
-                    style={{ background: 'rgba(255,158,64,0.1)', color: 'var(--signal)' }}
+                    style={{ background: 'rgba(255,170,50,0.1)', color: 'var(--signal)' }}
                   >
                     {c.ref}
                   </span>
