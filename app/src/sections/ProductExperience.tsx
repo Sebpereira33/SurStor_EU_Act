@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import InteractiveWorkflow from '@/components/InteractiveWorkflow'
 import { useLanguage } from '@/i18n'
 
 const records = [
@@ -44,6 +45,7 @@ export default function ProductExperience() {
         <h2 className="font-display mt-5 text-4xl font-bold sm:text-5xl">{t('demoTitle')}</h2>
         <p className="mt-5 max-w-2xl text-lg text-[var(--text-2)]">{t('demoBody')}</p>
         <div className="mt-8 flex flex-wrap gap-3 text-sm"><a href="#search-demo" className={button}>{t('demoSearch')}</a><a href="#integrity-demo" className={button}>{t('demoIntegrity')}</a><a href="#quickstart" className={button}>{t('demoConnect')}</a></div>
+        <InteractiveWorkflow />
         <div className="mt-10 overflow-hidden rounded-xl border border-[var(--line-strong)]">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--line)] bg-[var(--surface-2)] p-5"><div><p className="font-mono2 text-xs text-[var(--signal)]">{t('demoSession')}</p><p className="mt-1 font-semibold">{t('demoSessionName')}</p></div><button className={button} onClick={downloadSample}>{t('demoDownload')}</button></div>
           <div className="grid md:grid-cols-[0.8fr_1.5fr]"><div className="flex flex-col gap-3 bg-[var(--surface)] p-5" aria-label={t('demoSession')}>

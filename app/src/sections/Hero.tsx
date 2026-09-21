@@ -1,4 +1,5 @@
 import Reveal from '@/components/Reveal'
+import HeroNetwork from '@/components/HeroNetwork'
 import LogStream from '@/components/LogStream'
 import Countdown from '@/components/Countdown'
 import { useLanguage } from '@/i18n'
@@ -8,6 +9,7 @@ export default function Hero() {
   return (
     <section id="top" className="noise relative overflow-hidden pt-32 pb-20 sm:pt-40 sm:pb-28">
       <div className="grid-overlay absolute inset-0" aria-hidden="true" />
+      <HeroNetwork />
       {/* signal glow */}
       <div
         aria-hidden="true"
