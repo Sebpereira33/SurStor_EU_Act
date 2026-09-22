@@ -1,4 +1,5 @@
 import Reveal from '@/components/Reveal'
+import BeforeAfter from '@/components/BeforeAfter'
 
 const mono = { fontFamily: '"Space Mono", monospace' } as const
 
@@ -114,6 +115,7 @@ export default function Portability() {
           </Reveal>
         </div>
 
+        <BeforeAfter />
         <Reveal i={3}>
           <div className="panel noise relative mt-14 overflow-hidden p-4 sm:p-8">
             <PortabilityDiagram />
