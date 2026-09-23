@@ -61,7 +61,7 @@
     text-rendering: optimizeLegibility;
   }
   ::selection {
-    background: rgba(255, 170, 50, 0.28);
+    background: rgba(var(--signal-rgb), 0.28);
     color: #fff;
   }
   ::-webkit-scrollbar {
@@ -112,7 +112,7 @@
   color: var(--signal);
 }
 .signal-glow {
-  text-shadow: 0 0 24px rgba(255, 170, 50, 0.35);
+  text-shadow: 0 0 24px rgba(var(--signal-rgb), 0.35);
 }
 
 .hairline {
@@ -154,10 +154,10 @@
 @keyframes cta-breathe {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(255, 170, 50, 0);
+    box-shadow: 0 0 0 0 rgba(var(--signal-rgb), 0);
   }
   50% {
-    box-shadow: 0 0 0 6px rgba(255, 170, 50, 0.16);
+    box-shadow: 0 0 0 6px rgba(var(--signal-rgb), 0.16);
   }
 }
 .cta-breathe {
@@ -207,10 +207,10 @@
 @keyframes dial-pulse {
   0%,
   100% {
-    filter: drop-shadow(0 0 14px rgba(255, 170, 50, 0.16));
+    filter: drop-shadow(0 0 14px rgba(var(--signal-rgb), 0.16));
   }
   50% {
-    filter: drop-shadow(0 0 22px rgba(255, 170, 50, 0.3));
+    filter: drop-shadow(0 0 22px rgba(var(--signal-rgb), 0.3));
   }
 }
 .dial-pulse {
@@ -263,4 +263,43 @@
 :focus-visible {
   outline: 2px solid var(--signal);
   outline-offset: 2px;
+}
+
+/* Shareable palette studies; the default site keeps its original colors. */
+:root { --bg-rgb: 12, 22, 38; --signal-rgb: 255, 170, 50; }
+:root[data-palette="forest"] {
+  --bg: #0b1d19; --bg-rgb: 11, 29, 25;
+  --surface: #132e27; --surface-2: #1c3c33;
+  --line: #35594c; --line-strong: #527b6b;
+  --signal: #7de2ba; --signal-rgb: 125, 226, 186; --pass: #9bcbb8;
+  --text-1: #f1faf5; --text-2: #c6dfd3; --text-3: #a5c4b5;
+  --background: 163 45% 8%; --foreground: 147 47% 96%;
+  --card: 164 42% 13%; --popover: 164 42% 13%;
+  --primary: 156 64% 69%; --ring: 156 64% 69%;
+  --secondary: 163 36% 17%; --muted: 163 36% 17%; --accent: 163 36% 17%;
+  --muted-foreground: 151 21% 71%; --border: 158 25% 28%; --input: 158 25% 28%;
+}
+:root[data-palette="midnight"] {
+  --bg: #101321; --bg-rgb: 16, 19, 33;
+  --surface: #1b2035; --surface-2: #272e48;
+  --line: #3b486a; --line-strong: #596e99;
+  --signal: #83caff; --signal-rgb: 131, 202, 255; --pass: #b0b8f1;
+  --text-1: #f3f5ff; --text-2: #cbd4ed; --text-3: #a9b7d6;
+  --background: 229 35% 10%; --foreground: 230 100% 98%;
+  --card: 228 33% 16%; --popover: 228 33% 16%;
+  --primary: 206 100% 76%; --ring: 206 100% 76%;
+  --secondary: 227 30% 22%; --muted: 227 30% 22%; --accent: 227 30% 22%;
+  --muted-foreground: 221 35% 75%; --border: 223 29% 32%; --input: 223 29% 32%;
+}
+:root[data-palette="plum"] {
+  --bg: #211421; --bg-rgb: 33, 20, 33;
+  --surface: #332237; --surface-2: #46304b;
+  --line: #67496c; --line-strong: #89668f;
+  --signal: #f3c77a; --signal-rgb: 243, 199, 122; --pass: #d0b1dc;
+  --text-1: #fff5fc; --text-2: #e7ccdf; --text-3: #c9aac2;
+  --background: 300 25% 10%; --foreground: 318 100% 98%;
+  --card: 289 24% 17%; --popover: 289 24% 17%;
+  --primary: 38 83% 72%; --ring: 38 83% 72%;
+  --secondary: 289 22% 24%; --muted: 289 22% 24%; --accent: 289 22% 24%;
+  --muted-foreground: 314 22% 73%; --border: 291 19% 35%; --input: 291 19% 35%;
 }

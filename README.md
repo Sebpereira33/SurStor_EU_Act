@@ -1,4 +1,22 @@
-# React + TypeScript + Vite
+# SurStor website
+
+The website lives directly in this repository's root.
+
+## Run locally
+
+Run `npm ci`, then `npm run dev` from the repository root.
+
+## Build and hosting
+
+- Root directory: repository root (`.`), not `app`.
+- Build command: `npm run build`.
+- Publish directory: `dist`.
+- Local production preview: `npm run preview`.
+
+Color studies are available with `?palette=forest`, `?palette=midnight`, or
+`?palette=plum`. Without a palette parameter, the original colors are used.
+
+## Template reference
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

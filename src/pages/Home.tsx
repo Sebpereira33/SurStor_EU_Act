@@ -13,6 +13,7 @@ import Timeline from '@/sections/Timeline'
 import FAQ from '@/sections/FAQ'
 import { CTA, Footer } from '@/sections/Footer'
 import { LanguageProvider, LanguageSwitcher } from '@/i18n'
+import PalettePreview from '@/components/PalettePreview'
 
 export default function Home() {
   return <LanguageProvider>
@@ -35,6 +36,7 @@ export default function Home() {
       </main>
       <Footer />
       <LanguageSwitcher />
+      <PalettePreview />
     </div>
   </LanguageProvider>
 }
