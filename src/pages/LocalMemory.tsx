@@ -53,6 +53,6 @@ export default function LocalMemory() {
         ['What does verification tell me?', 'Verification checks content bindings, session links, and signatures. It helps detect changes to recorded work; it does not prove that the original answer was correct.'],
       ].map(([question, answer]) => <details key={question}><summary>{question}<span aria-hidden="true">+</span></summary><p>{answer}</p></details>)}</section>
       <section className="lm-wrap lm-closing"><p className="lm-eyebrow">YOUR NEXT MODEL. YOUR EXISTING WORK.</p><h2>Change your model.<br /><em>Keep what you created.</em></h2><a href="mailto:contact@surstor.net?subject=SurStor%20local%20memory%20access" className="lm-primary">Get started with SurStor <ArrowUpRight size={18}/></a></section>
-    </main><footer className="lm-wrap lm-footer"><a href="#local-top" className="lm-brand"><img src={`${import.meta.env.BASE_URL}surstor-logo-transparent.png`} alt="" width="38" height="38"/>SurStor</a><p>Local memory. Lasting context.</p><a href="mailto:contact@surstor.net">contact@surstor.net</a><Link to="/">Enterprise version <ArrowUpRight size={14}/></Link></footer>
+    </main><footer className="lm-wrap lm-footer"><a href="#local-top" className="lm-brand"><img src={`${import.meta.env.BASE_URL}surstor-logo-transparent.png`} alt="" width="38" height="38"/>SurStor</a><p>Local memory. Lasting context.</p><a href="mailto:contact@surstor.net">contact@surstor.net</a><Link to="/enterprise">Enterprise version <ArrowUpRight size={14}/></Link></footer>
   </div>
 }

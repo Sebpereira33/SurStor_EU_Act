@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/local-memory", "destination": "/index.html" },
+    { "source": "/enterprise", "destination": "/index.html" }
+  ]
+}

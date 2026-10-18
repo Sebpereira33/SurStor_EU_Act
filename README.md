@@ -4,9 +4,9 @@ The website lives directly in this repository's root.
 
 ## Website versions
 
-- `/`: original enterprise website.
-- `/local-memory`: green local-memory website, focused on switching models while
+- `/` and `/local-memory`: green local-memory website, focused on switching models while
   preserving saved outputs, with an illustrative model-comparison demo.
+- `/enterprise`: original enterprise website.
 
 Configure the host to serve `index.html` for application routes such as
 `/local-memory` so direct links and browser refreshes work.
@@ -22,8 +22,9 @@ Run `npm ci`, then `npm run dev` from the repository root.
 - Publish directory: `dist`.
 - Local production preview: `npm run preview`.
 
-Color studies are available with `?palette=forest`, `?palette=midnight`, or
-`?palette=plum`. Without a palette parameter, the original colors are used.
+Enterprise color studies are available at `/enterprise?palette=forest`,
+`/enterprise?palette=midnight`, or `/enterprise?palette=plum`. The public homepage
+uses the green theme.
 
 ## Template reference
 
