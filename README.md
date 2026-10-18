@@ -2,6 +2,15 @@
 
 The website lives directly in this repository's root.
 
+## Website versions
+
+- `/`: original enterprise website.
+- `/local-memory`: green local-memory website, focused on switching models while
+  preserving saved outputs, with an illustrative model-comparison demo.
+
+Configure the host to serve `index.html` for application routes such as
+`/local-memory` so direct links and browser refreshes work.
+
 ## Run locally
 
 Run `npm ci`, then `npm run dev` from the repository root.
