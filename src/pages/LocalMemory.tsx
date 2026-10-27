@@ -1,8 +1,10 @@
 import { useLayoutEffect, useState } from 'react'
-import { ArrowUpRight, ArrowRight, Check, Database, Fingerprint, Github, HardDrive, Search, ShieldCheck, Terminal, Workflow } from 'lucide-react'
+import { ArrowUpRight, ArrowRight, Check, Database, Fingerprint, Github, HardDrive, Search, ShieldCheck } from 'lucide-react'
 import { Link } from 'react-router'
 import './local-memory.css'
 import ModelComparison from '@/components/ModelComparison'
+import MemoryJourney from '@/components/MemoryJourney'
+import DockerWalkthrough from '@/components/DockerWalkthrough'
 
 const records = [
   { question: 'What did we decide?', title: 'Keep the project local.', body: 'Use a local model for drafting. Keep project records on this machine. Review the final proposal before sharing.', session: 'Studio / project planning', model: 'Local model A', time: 'Saved in the first session' },
@@ -12,13 +14,6 @@ const records = [
 
 export default function LocalMemory() {
   const [selected, setSelected] = useState(0)
-  const [copied, setCopied] = useState('')
-  const [dockerCopied, setDockerCopied] = useState('')
-  const dockerCommands = 'git clone https://github.com/SurStor/SurStor_Memory.git\ncd SurStor_Memory\ndocker compose -f compose.registry.yaml pull\ndocker compose -f compose.registry.yaml up -d\ndocker compose -f compose.registry.yaml ps'
-  async function copyDocker() {
-    try { await navigator.clipboard.writeText(dockerCommands); setDockerCopied('Docker commands copied.') }
-    catch { setDockerCopied('Select the commands above to copy them manually.') }
-  }
   const record = records[selected]
   useLayoutEffect(() => {
     const previous = document.documentElement.dataset.palette
@@ -27,17 +22,12 @@ export default function LocalMemory() {
     document.title = 'SurStor — Local memory for your local AI'
     return () => { if (previous) document.documentElement.dataset.palette = previous; else delete document.documentElement.dataset.palette; document.title = title }
   }, [])
-  const config = '{\n  "mcpServers": {\n    "surstor": {\n      "type": "http",\n      "url": "http://127.0.0.1:8484/mcp"\n    }\n  }\n}'
-  async function copyConfig() {
-    try { await navigator.clipboard.writeText(config); setCopied('Configuration copied.') }
-    catch { setCopied('Select the configuration below to copy it manually.') }
-  }
   return <div className="local-memory" id="local-top">
     <header className="lm-nav"><a href="#local-top" className="lm-brand"><img src={`${import.meta.env.BASE_URL}surstor-logo-transparent.png`} alt="" width="42" height="42" />SurStor<span>LOCAL MEMORY</span></a><nav aria-label="Main navigation"><a href="#local-how">How it works</a><a href="#local-demo">Compare models</a><a className="lm-github" href="https://github.com/SurStor/SurStor_Memory" target="_blank" rel="noopener noreferrer" aria-label="SurStor Memory on GitHub (opens in a new tab)" title="Clone SurStor Memory on GitHub"><Github size={21} aria-hidden="true" /></a><a href="#local-setup" className="lm-small-cta">Get started <ArrowUpRight size={15} /></a></nav></header>
     <main>
       <section className="lm-hero lm-wrap">
         <div className="lm-hero-copy"><p className="lm-eyebrow"><span className="lm-dot" /> YOUR MACHINE. YOUR MODELS. YOUR MEMORY.</p><h1>Switch models.<br /><em>Keep your results<br />intact.</em></h1><p className="lm-lead">Try a different local model without losing what the last one produced. SurStor keeps saved outputs with their model and session details, so you can organize work by model, compare results, and carry the best context forward.</p><div className="lm-actions"><a href="#local-setup" className="lm-primary">Build your local memory <ArrowUpRight size={18} /></a><a href="#local-demo" className="lm-text-link">Compare model outputs <ArrowRight size={17} /></a></div><p className="lm-footnote">Original outputs preserved · Organized by model · Stored locally</p></div>
-        <div className="lm-console" aria-label="Illustration of a local memory workflow"><div className="lm-console-bar"><span><span className="lm-dot" /> Personal workspace</span><span>ILLUSTRATION</span></div><div className="lm-console-body"><div className="lm-models"><span><Terminal size={17} /> Local model A</span><span><Terminal size={17} /> Local model B</span></div><div className="lm-flow-line" /><div className="lm-vault"><Database size={29} /><div><strong>Different models. One saved history.</strong><span>SurStor · on your machine</span></div><HardDrive size={20} /></div><div className="lm-record"><span className="lm-record-icon"><Workflow size={18} /></span><div><small>LOCAL MODEL A / ORIGINAL OUTPUT</small><strong>Your first result stays intact</strong><p>Keep the original draft when you try another model.</p></div></div><div className="lm-record"><span className="lm-record-icon"><Fingerprint size={18} /></span><div><small>LOCAL MODEL B / NEW OUTPUT</small><strong>A second result, saved separately</strong><p>Compare both outputs, with their model details.</p></div></div><div className="lm-console-footer"><span><Check size={14} /> Stored locally</span><span>Your next session starts here ↗</span></div></div></div>
+        <MemoryJourney />
       </section>
       <div className="lm-strip"><div className="lm-wrap"><span>Keep your setup.</span><p>Your local model + an MCP-compatible client + SurStor</p><span>Carry the context forward ↗</span></div></div>
       <section id="local-how" className="lm-wrap lm-section"><p className="lm-eyebrow">01 / CONTINUITY, WITHOUT STARTING OVER</p><div className="lm-section-heading"><h2>Switch the model.<br /><em>Keep the thread.</em></h2><p>Use one model for a first draft and another for a fresh approach. Their saved results remain separate, attributed, and available to revisit.</p></div><div className="lm-feature-grid">{[
@@ -53,10 +43,7 @@ export default function LocalMemory() {
           <ol><li><strong>Prepare Docker.</strong> Use Docker Engine 28+ with Compose v2, or a current Docker Desktop with Linux containers. The image is tested on Linux x86-64; Docker Desktop and ARM64 have not been validated.</li><li><strong>Start SurStor.</strong> Run the commands in order, continuing only after each succeeds. No host Java, Maven, or Covia build is needed. If you already cloned the repository, use an up-to-date checkout and skip the first two lines.</li><li><strong>Connect your client.</strong> Keep your MCP client on the host and use the example configuration, adapting it to your client’s format. Stop any other node using port 8484 first.</li><li><strong>Save and recall.</strong> Store a sample record, restart the container, then retrieve and verify it. Your records and signing identity live in a persistent Docker volume.</li></ol>
           <a className="lm-text-link" href="https://github.com/SurStor/SurStor_Memory/blob/main/docs/docker.md" target="_blank" rel="noopener noreferrer">Full Docker guide <ArrowUpRight size={16} /></a>
         </div>
-        <div className="lm-setup-panels">
-          <div className="lm-config"><div className="lm-console-bar"><span>01 / START WITH DOCKER</span><button onClick={copyDocker} aria-label="Copy Docker setup commands">Copy</button></div><pre><code>{dockerCommands}</code></pre><p role="status">{dockerCopied}</p><div className="lm-config-note"><HardDrive size={19}/><p>Use <code>docker compose -f compose.registry.yaml stop</code> to stop the node. Keep the same Compose project to reopen your memory. Removing volumes with <code>down -v</code> deletes saved data.</p></div></div>
-          <div className="lm-config"><div className="lm-console-bar"><span>02 / MCP CONFIGURATION</span><button onClick={copyConfig} aria-label="Copy MCP configuration">Copy</button></div><pre><code>{config}</code></pre><p role="status">{copied}</p><div className="lm-config-note"><ShieldCheck size={19}/><p>The supplied Compose file publishes only 127.0.0.1:8484. Keep that binding: the node trusts local callers and has no user authentication.</p></div></div>
-        </div>
+        <DockerWalkthrough />
       </div></section>
       <section className="lm-wrap lm-section lm-faq"><p className="lm-eyebrow">A FEW THINGS WORTH KNOWING</p><h2>Your questions, answered.</h2>{[
         ['Will switching models change my saved results?', 'Changing models does not rewrite records already saved in SurStor. Save the new output as another record, then retrieve either original when you need it. Only captured work is preserved; unsaved chat history is not automatically transferred.'],
