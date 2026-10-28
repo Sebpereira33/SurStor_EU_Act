@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Check, Terminal } from 'lucide-react'
 
 const examples = [
@@ -15,13 +15,32 @@ const examples = [
 export default function ModelComparison() {
   const [task, setTask] = useState(0)
   const [filter, setFilter] = useState('all')
+  const [visibleWords, setVisibleWords] = useState<number | null>(null)
+  const [reducedMotion, setReducedMotion] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
   const example = examples[task]
+  const maxWords = Math.max(...example.outputs.map(output => output.text.split(' ').length))
+  const streaming = visibleWords !== null && visibleWords < maxWords && !reducedMotion
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)')
+    function update() { setReducedMotion(media.matches); if (media.matches) setVisibleWords(null) }
+    media.addEventListener('change', update)
+    return () => media.removeEventListener('change', update)
+  }, [])
+  useEffect(() => {
+    if (!streaming) return
+    const timer = window.setInterval(() => setVisibleWords(count => count === null ? null : count + 1), 65)
+    return () => window.clearInterval(timer)
+  }, [streaming])
+  function changeTask(value: number) { setTask(value); setVisibleWords(null) }
+  function replay() { setFilter('all'); setVisibleWords(0) }
+
   return <section id="local-demo" className="lm-wrap lm-section lm-compare">
     <p className="lm-eyebrow">02 / DIFFERENT MODELS. ORIGINAL RESULTS.</p>
     <div className="lm-section-heading"><h2>See who produced what.<br /><em>Compare without the guesswork.</em></h2><p>Keep each model’s output attached to its source. Review the originals together, spot different approaches, and decide what to use next.</p></div>
-    <div className="lm-compare-controls"><label htmlFor="comparison-task">Sample task<select id="comparison-task" value={task} onChange={event => setTask(Number(event.target.value))}>{examples.map((item, index) => <option value={index} key={item.task}>{item.task}</option>)}</select></label><div role="group" aria-label="Filter outputs by model">{[['all', 'Compare both'], ['Local model A', 'Model A'], ['Local model B', 'Model B']].map(([value, label]) => <button key={value} aria-pressed={filter === value} onClick={() => setFilter(value)}>{label}</button>)}</div></div>
+    <div className="lm-compare-controls"><label htmlFor="comparison-task">Sample task<select id="comparison-task" value={task} onChange={event => changeTask(Number(event.target.value))}>{examples.map((item, index) => <option value={index} key={item.task}>{item.task}</option>)}</select></label><div role="group" aria-label="Filter outputs by model">{[['all', 'Compare both'], ['Local model A', 'Model A'], ['Local model B', 'Model B']].map(([value, label]) => <button key={value} aria-pressed={filter === value} onClick={() => setFilter(value)}>{label}</button>)}</div></div>
     <div className="lm-shared-prompt"><span className="lm-eyebrow">SAME PROMPT / TWO SAVED OUTPUTS</span><p>{example.prompt}</p></div>
-    <div className="lm-output-grid" aria-live="polite">{example.outputs.filter(output => filter === 'all' || output.model === filter).map(output => <article key={output.id}><div className="lm-output-head"><span><Terminal size={18}/>{output.model}</span><span>{output.version}</span></div><p className="lm-output-text">{output.text}</p><div className="lm-output-focus"><small>APPROACH IN THIS EXAMPLE</small><p>{output.focus}</p></div><div className="lm-output-meta"><code>{output.id}</code><span><Check size={14}/> Original retained</span></div></article>)}</div>
-    <p className="lm-footnote">Illustrative outputs, not model benchmarks. Filters change this view only; both saved examples stay intact. In your workflow, model labels come from your client’s recorded metadata.</p>
+    <div className="lm-stream-controls"><div><span className="lm-eyebrow">SAMPLE PLAYBACK</span><p role="status">{reducedMotion ? 'Reduced motion enabled. Both samples are shown in full.' : streaming ? 'Playing preset responses. No live model is connected.' : 'Both originals are ready to compare. Playback illustrates how outputs appear.'}</p></div><div><button onClick={replay} disabled={reducedMotion || streaming}>Replay sample responses</button><button onClick={() => { setVisibleWords(null); setFilter('all') }} disabled={!streaming}>Show both instantly</button></div></div>
+    <div className="lm-output-grid">{example.outputs.filter(output => filter === 'all' || output.model === filter).map(output => <article key={output.id}><div className="lm-output-head"><span><Terminal size={18}/>{output.model}</span><span>{output.version}</span></div><p className="lm-output-text"><span className="sr-only">{output.text}</span><span aria-hidden="true">{streaming ? output.text.split(' ').slice(0, visibleWords ?? 0).join(' ') : output.text}{streaming && (visibleWords ?? 0) < output.text.split(' ').length && <span className="lm-stream-caret" />}</span></p><div className="lm-output-focus"><small>APPROACH IN THIS EXAMPLE</small><p>{output.focus}</p></div><div className="lm-output-meta"><code>{output.id}</code><span><Check size={14}/> Original retained</span></div></article>)}</div>
+    <p className="lm-footnote">Preset examples, not live AI responses or model benchmarks. Playback speed does not represent model performance. Filters change this view only; both saved examples stay intact. In your workflow, model labels come from your client’s recorded metadata.</p>
   </section>
 }
