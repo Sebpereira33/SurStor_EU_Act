@@ -2,6 +2,14 @@
 
 The website lives directly in this repository's root.
 
+## Current Memory installation
+
+Use `ghcr.io/surstor/surstor-memory:0.2.0-alpha.3-mcp.1`, matching the
+[Official MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.SurStor%2Fsurstor-memory)
+and the Memory repository installation recipes. This is a packaging revision
+of the alpha.3 application, with no application behavior change.
+Update the installation panel and this note together when changing versions.
+
 ## Website versions
 
 - `/` and `/local-memory`: green local-memory website, focused on switching models while
