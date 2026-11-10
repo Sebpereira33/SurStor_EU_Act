@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { createClient, type Session, type SupabaseClient } from '@supabase/supabase-js'
 import { Link } from 'react-router'
 import './usage-dashboard.css'
+import UsageConnectionGuide from '@/components/UsageConnectionGuide'
 
 type Group = {model:string;provider:string;tool:string;requests:number;input:number|null;output:number|null}
 type Summary = {groups:Group[];costs:{currency:string;kind:string;amount:string}[];unpriced:number}
@@ -10,7 +11,19 @@ function Workspace({client}:{client:SupabaseClient}) {
   const [days,setDays]=useState(30), [refresh,setRefresh]=useState(0)
   const [data,setData]=useState<Summary|null>(null), [error,setError]=useState(''), [key,setKey]=useState(''), [deviceMessage,setDeviceMessage]=useState(''), [busy,setBusy]=useState(false)
   useEffect(()=>{ let current=true;setData(null);setError('')
-    client.rpc('surstor_summary',{days}).then(({data,error})=>{if(current){if(error)setError(error.code==='42501'?'This account has not been enrolled in the pilot.':'Could not load your usage. Try refreshing.');else setData(data as Summary)}})
+    async function load(){
+      try {
+        let result=await client.rpc('surstor_summary',{days})
+        if(result.error?.code==='42501'){
+          const opened=await client.rpc('surstor_open_workspace')
+          if(opened.error) throw opened.error
+          result=await client.rpc('surstor_summary',{days})
+        }
+        if(result.error) throw result.error
+        if(current)setData(result.data as Summary)
+      } catch { if(current)setError('Could not open your workspace. Refresh to try again, or contact contact@surstor.net.') }
+    }
+    void load()
     return ()=>{current=false}
   },[client,days,refresh])
   async function device(enable:boolean){setBusy(true);setKey('');setDeviceMessage('')
@@ -34,6 +47,6 @@ export default function PersonalUsage(){
     void init();return ()=>{current=false;stop?.();document.title=old}
   },[])
   async function login(e:React.FormEvent){e.preventDefault();if(!client)return;setBusy(true)
-    try {const {error}=await client.auth.signInWithOtp({email,options:{shouldCreateUser:false,emailRedirectTo:window.location.origin+'/dashboard/personal'}});setMessage(error?'Could not send a sign-in link. Check your invite or try again later.':'Check your email and open the sign-in link in this browser.')}finally{setBusy(false)}}
-  return <div className="usage-page"><header><Link to="/">SurStor</Link><Link to="/dashboard">Sample dashboard</Link></header><main><p className="usage-kicker">SURSTOR / PERSONAL WORKSPACE</p><h1>My usage</h1>{!ready?<p>Loading sign-in…</p>:session&&client?<><div className="usage-filters"><span>Signed in as {session.user.email}</span><button onClick={async()=>{const {error}=await client.auth.signOut({scope:'local'});setMessage(error?'Could not sign out. Please try again.':'')}}>Sign out</button></div><Workspace key={session.user.id} client={client}/></>:client?<form className="usage-filters" onSubmit={login}><label>Invited email address<input required type="email" autoComplete="email" value={email} onChange={e=>setEmail(e.target.value)}/></label><button disabled={busy}>Email me a sign-in link</button></form>:null}<p role="status">{message}</p></main></div>
+    try {const {error}=await client.auth.signInWithOtp({email,options:{shouldCreateUser:true,emailRedirectTo:window.location.origin+'/dashboard/personal'}});setMessage(error?'Could not send a sign-in link. Check the address or try again later.':'Check your email and open the sign-in link in this browser.')}finally{setBusy(false)}}
+  return <div className="usage-page"><header><Link to="/">SurStor</Link><Link to="/dashboard">Sample dashboard</Link></header><main><p className="usage-kicker">SURSTOR / PERSONAL WORKSPACE</p><h1>My usage</h1>{!ready?<p>Loading sign-in…</p>:session&&client?<><div className="usage-filters"><span>Signed in as {session.user.email}</span><button onClick={async()=>{const {error}=await client.auth.signOut({scope:'local'});setMessage(error?'Could not sign out. Please try again.':'')}}>Sign out</button></div><Workspace key={session.user.id} client={client}/></>:client?<form className="usage-filters" onSubmit={login}><label>Email address<input required type="email" autoComplete="email" value={email} onChange={e=>setEmail(e.target.value)}/></label><button disabled={busy}>Email me a sign-in link</button><p>New here? Your first sign-in creates a private workspace.</p></form>:null}<p role="status">{message}</p><UsageConnectionGuide/></main></div>
 }

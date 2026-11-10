@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import './usage-dashboard.css'
+import UsageConnectionGuide from '@/components/UsageConnectionGuide'
 
 // Fictional daily aggregates from a fixed 30-day sample. Null means unreported.
 const sample = [
@@ -27,5 +28,6 @@ export default function UsageDashboard() {
     <section className="usage-panel"><h2>Activity by model and tool</h2><p role="status">{requests ? `${requests} requests match your filters.` : 'No sample activity matches these filters.'} Missing counts appear as a dash.</p><div className="usage-scroll"><table><thead><tr>{['Sample day','Model','Tool','Requests','Input','Output'].map(v=><th key={v} scope="col">{v}</th>)}</tr></thead><tbody>{[...rows].sort((a,b)=>a.day-b.day).map(r=><tr key={r.day}><td>Day {30-r.day}</td><td>{r.model}</td><td>{r.tool}</td><td>{r.requests}</td><td>{r.input === null ? '—' : number(r.input)}</td><td>{r.output === null ? '—' : number(r.output)}</td></tr>)}</tbody></table></div></section>
     <section className="usage-panel"><h2>Cost breakdown</h2><p>Reported costs and estimates are shown separately for each currency. An unpriced request has no supplied cost.</p>{costs.size ? <dl>{[...costs].map(([key,v])=><div key={key}><dt>{key}</dt><dd>{v.toFixed(2)}</dd></div>)}</dl> : <p>No priced requests in this selection.</p>}</section>
     <section className="usage-panel"><h2>View your own usage</h2><p>If you already run the SurStor Usage Dashboard on this device, open it to connect and view your workspace. Enter your credential only in your local dashboard.</p><a href="http://127.0.0.1:8790/" target="_blank" rel="noopener noreferrer">Open local dashboard ↗</a></section>
+    <UsageConnectionGuide/>
   </main></div>
 }
