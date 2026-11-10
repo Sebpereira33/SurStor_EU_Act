@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/dashboard", "destination": "/index.html" },
     {
       "source": "/local-memory",
       "destination": "/index.html"
