@@ -42,7 +42,25 @@ export default function PersonalUsage(){
   useEffect(()=>{let current=true;let stop:(()=>void)|undefined
     const old=document.title;document.title='My usage | SurStor'
     async function init(){try {const r=await fetch('/api/dashboard-config',{cache:'no-store'});if(!r.ok)throw Error();const cfg=await r.json();if(!current)return
-      const c=createClient(cfg.url,cfg.key,{auth:{flowType:'pkce',storageKey:'surstor-pilot-auth'}});const {data}=c.auth.onAuthStateChange((_event,s)=>{if(current){setSession(s);setReady(true)}});stop=()=>data.subscription.unsubscribe();setClient(c)
+      const params = [new URLSearchParams(location.search), new URLSearchParams(location.hash.slice(1))]
+      const failed = params.some(p => p.has('error') || p.has('error_code'))
+      const returning = params.some(p => p.has('code'))
+      const retry = 'Request a new sign-in link and open the newest email in this browser.'
+      if (failed) {
+        setMessage('This sign-in link is invalid or has expired. ' + retry)
+        history.replaceState(history.state, '', location.pathname)
+      }
+      const c=createClient(cfg.url,cfg.key,{auth:{flowType:'pkce',storageKey:'surstor-pilot-auth'}})
+      const {data}=c.auth.onAuthStateChange((event,s)=>{
+        if (!current) return
+        if (returning && event === 'INITIAL_SESSION') {
+          history.replaceState(history.state, '', location.pathname)
+          if (!s) setMessage('Sign-in could not be completed. ' + retry)
+        }
+        setSession(s)
+        setReady(true)
+      })
+      stop=()=>data.subscription.unsubscribe();setClient(c)
     }catch{if(current){setReady(true);setMessage('Personal usage is not available on this deployment yet.')}}}
     void init();return ()=>{current=false;stop?.();document.title=old}
   },[])
