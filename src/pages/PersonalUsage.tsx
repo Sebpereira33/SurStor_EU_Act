@@ -26,6 +26,14 @@ function Workspace({client}:{client:SupabaseClient}) {
     void load()
     return ()=>{current=false}
   },[client,days,refresh])
+  async function copyKey() {
+    try {
+      await navigator.clipboard.writeText(key)
+      setDeviceMessage('API key copied.')
+    } catch {
+      setDeviceMessage('Select the API key and use your device�s Copy command.')
+    }
+  }
   async function device(enable:boolean){setBusy(true);setKey('');setDeviceMessage('')
     try {const {data,error}=await client.rpc('surstor_device',{enable});if(error) throw error
       if(enable)setKey(data);setDeviceMessage(enable?'Copy this key now. It will not be shown again.':'Your device key has been revoked.')
@@ -34,7 +42,12 @@ function Workspace({client}:{client:SupabaseClient}) {
     <div role="status">{error || (!data?'Loading your workspace…':data.groups.length?'':'No requests reported for this period. Connect your reporting tool below.')}</div>
     {data && <><section className="usage-panel"><h2>Usage by model and tool</h2><div className="usage-scroll"><table><thead><tr>{['Provider / model','Tool','Requests','Known input tokens','Known output tokens'].map(s=><th key={s}>{s}</th>)}</tr></thead><tbody>{data.groups.map(g=><tr key={JSON.stringify([g.provider,g.model,g.tool])}><td>{g.provider} / {g.model}</td><td>{g.tool}</td><td>{g.requests}</td><td>{g.input?.toLocaleString()??'—'}</td><td>{g.output?.toLocaleString()??'—'}</td></tr>)}</tbody></table></div><p>A dash means no count was reported.</p></section>
     <section className="usage-panel"><h2>Reported costs and estimates</h2><p>{data.unpriced} unpriced requests.</p>{data.costs.map(c=><p key={c.currency+c.kind}>{c.currency} {c.amount} · {c.kind==='estimated'?'Estimated':'Provider-reported'}</p>)}</section>
-    <section className="usage-panel"><h2>Connect your reporting tool</h2><p>Configure the SurStor reporting bridge with <code>SURSTOR_USAGE_URL=https://www.surstor.net</code> and your API key as <code>SURSTOR_USAGE_DEVICE_TOKEN</code>. Usage appears after your tool reports a request.</p><p>Each workspace has one API key. Creating a new one immediately replaces the old one.</p><div className="usage-filters"><button disabled={busy} onClick={()=>device(true)}>Create or replace API key</button><button disabled={busy} onClick={()=>device(false)}>Revoke API key</button></div><p role="status">{deviceMessage}</p>{key && <label>API key<input readOnly value={key} onFocus={e=>e.target.select()}/><button onClick={()=>setKey('')}>Hide</button></label>}</section></>}
+    <section className="usage-panel"><h2>Connect your reporting tool</h2><p>Configure the SurStor reporting bridge with <code>SURSTOR_USAGE_URL=https://www.surstor.net</code> and your API key as <code>SURSTOR_USAGE_DEVICE_TOKEN</code>. Usage appears after your tool reports a request.</p><p>Each workspace has one API key. Creating a new one immediately replaces the old one.</p><div className="usage-filters"><button disabled={busy} onClick={()=>device(true)}>Create or replace API key</button><button disabled={busy} onClick={()=>device(false)}>Revoke API key</button></div><p role="status">{deviceMessage}</p>{key && <div className="usage-filters usage-key-row">
+      <label htmlFor="usage-api-key">API key</label>
+      <input id="usage-api-key" readOnly spellCheck={false} value={key} onFocus={e=>e.target.select()}/>
+      <button type="button" onClick={copyKey}>Copy</button>
+      <button type="button" onClick={()=>{setKey('');setDeviceMessage('')}}>Hide</button>
+    </div>}</section></>}
   </>
 }
 export default function PersonalUsage(){

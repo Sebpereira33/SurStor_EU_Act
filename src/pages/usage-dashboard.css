@@ -1,3 +1,16 @@
 .usage-page{min-height:100vh;background:#0b1d19;color:#eff9f3;font-family:inherit}.usage-page header,.usage-page main{max-width:1160px;margin:auto;padding:24px clamp(18px,4vw,52px)}.usage-page header{display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid #345647}.usage-page a{color:#8be5bd;text-decoration:underline;text-underline-offset:4px}.usage-page .usage-brand{display:flex;align-items:center;gap:9px;font-size:24px;font-weight:700;color:#fff;text-decoration:none}.usage-page main{padding-block:52px 80px}.usage-kicker{color:#8be5bd;font:11px/1.8 monospace;letter-spacing:.16em}.usage-page h1{font-size:clamp(36px,6vw,66px);letter-spacing:-.045em;line-height:1.2;margin:12px 0}.usage-lead,.usage-panel p,.usage-page aside p{line-height:1.7;color:#bad2c7}.usage-page aside,.usage-panel,.usage-metrics article{border:1px solid #35594c;border-radius:10px;padding:20px;background:#122c23}.usage-page aside{margin:28px 0;border-left:3px solid #7de2ba}.usage-filters{display:flex;align-items:end;flex-wrap:wrap;gap:14px;margin:24px 0}.usage-filters label{display:grid;gap:6px;font-size:13px;color:#c6dfd3}.usage-filters select,.usage-filters button{border:1px solid #537868;border-radius:5px;padding:10px 14px;background:#152e25;color:#eff9f3}.usage-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px}.usage-metrics span{font-size:13px;color:#b9d3c6}.usage-metrics strong{display:block;font-size:30px;color:#8be5bd}.usage-panel{margin-top:18px}.usage-panel h2{font-size:23px;margin-bottom:6px}.usage-scroll{overflow-x:auto}.usage-panel table{border-collapse:collapse;width:100%;margin-top:16px;white-space:nowrap}.usage-panel th,.usage-panel td{text-align:left;padding:10px;border-bottom:1px solid #35594c;font-size:14px}.usage-panel th{color:#9cc4ae}.usage-panel dl>div{display:flex;justify-content:space-between;max-width:400px;margin-top:12px}.usage-panel a{display:inline-block;margin-top:14px}.usage-page :focus-visible{outline:2px solid #8be5bd;outline-offset:3px}
 
 .usage-guide ol{list-style:decimal;padding-left:1.5rem}.usage-guide li,.usage-guide details,.usage-guide>p{margin-top:1rem}.usage-guide summary{cursor:pointer;color:#8be5bd}.usage-guide pre{overflow-x:auto;padding:1rem;background:#0b1d19;border-radius:6px}.usage-guide code{overflow-wrap:anywhere}.usage-guide li a{display:inline;margin:0}
+
+.usage-key-row { gap: 8px; align-items: center; }
+.usage-key-row label { flex-basis: 100%; }
+.usage-key-row input {
+  flex: 1 1 8rem;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid #537868;
+  border-radius: 5px;
+  background: #fff;
+  color: #10271e;
+  font-family: monospace;
+}
