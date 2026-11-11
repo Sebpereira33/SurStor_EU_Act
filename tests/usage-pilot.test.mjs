@@ -11,8 +11,11 @@ test('two-account pilot, retry, revocation and database permissions', async()=>{
  await db.exec("create role anon;create role authenticated;create role service_role;create schema auth;create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz);create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;")
  await db.exec(await readFile(new URL('../supabase/migrations/202611100001_usage_pilot.sql',import.meta.url),'utf8'))
  await db.exec(await readFile(new URL('../supabase/migrations/202611100002_public_email_workspaces.sql',import.meta.url),'utf8'))
+ await db.exec('alter table auth.users add column is_anonymous boolean default false')
+ await db.exec(await readFile(new URL('../supabase/migrations/202611110001_browser_workspaces.sql',import.meta.url),'utf8'))
  const a=randomUUID(), b=randomUUID()
- for(const id of [a,b]) await db.query("insert into auth.users values($1,'tester@example.invalid',now())",[id])
+ await db.query("insert into auth.users values($1,null,null,true)",[a])
+ await db.query("insert into auth.users values($1,'tester@example.invalid',now(),false)",[b])
  const pending=randomUUID();await db.query("insert into auth.users values($1,'pending@example.invalid',null)",[pending])
  async function asUser(id){await db.exec('reset role;set role authenticated');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[id])}
  await asUser(pending);await assert.rejects(db.query('select public.surstor_open_workspace()'))
