@@ -9,7 +9,7 @@ type Summary = {groups:Group[];costs:{currency:string;kind:string;amount:string}
 
 function Workspace({client}:{client:SupabaseClient}) {
   const [days,setDays]=useState(30), [refresh,setRefresh]=useState(0)
-  const [data,setData]=useState<Summary|null>(null), [error,setError]=useState(''), [key,setKey]=useState(''), [deviceMessage,setDeviceMessage]=useState(''), [busy,setBusy]=useState(false)
+  const [data,setData]=useState<Summary|null>(null), [error,setError]=useState('')
   useEffect(()=>{ let current=true;setData(null);setError('')
     async function load(){
       try {
@@ -26,28 +26,11 @@ function Workspace({client}:{client:SupabaseClient}) {
     void load()
     return ()=>{current=false}
   },[client,days,refresh])
-  async function copyKey() {
-    try {
-      await navigator.clipboard.writeText(key)
-      setDeviceMessage('API key copied.')
-    } catch {
-      setDeviceMessage('Select the API key and use your device’s Copy command.')
-    }
-  }
-  async function device(enable:boolean){setBusy(true);setKey('');setDeviceMessage('')
-    try {const {data,error}=await client.rpc('surstor_device',{enable});if(error) throw error
-      if(enable)setKey(data);setDeviceMessage(enable?'Copy this key now. It will not be shown again.':'Your device key has been revoked.')
-    } catch {setDeviceMessage('Could not change the device key.')} finally {setBusy(false)}}
   return <><section className="usage-filters"><label>Reporting period<select value={days} onChange={e=>setDays(+e.target.value)}><option value={7}>Last 7 days</option><option value={30}>Last 30 days</option></select></label><button onClick={()=>setRefresh(v=>v+1)}>Refresh usage</button></section>
-    <div role="status">{error || (!data?'Loading your workspaceâ€¦':data.groups.length?'':'No requests reported for this period. Connect your reporting tool below.')}</div>
-    {data && <><section className="usage-panel"><h2>Usage by model and tool</h2><div className="usage-scroll"><table><thead><tr>{['Provider / model','Tool','Requests','Known input tokens','Known output tokens'].map(s=><th key={s}>{s}</th>)}</tr></thead><tbody>{data.groups.map(g=><tr key={JSON.stringify([g.provider,g.model,g.tool])}><td>{g.provider} / {g.model}</td><td>{g.tool}</td><td>{g.requests}</td><td>{g.input?.toLocaleString()??'â€”'}</td><td>{g.output?.toLocaleString()??'â€”'}</td></tr>)}</tbody></table></div><p>A dash means no count was reported.</p></section>
-    <section className="usage-panel"><h2>Reported costs and estimates</h2><p>{data.unpriced} unpriced requests.</p>{data.costs.map(c=><p key={c.currency+c.kind}>{c.currency} {c.amount} Â· {c.kind==='estimated'?'Estimated':'Provider-reported'}</p>)}</section>
-    <section className="usage-panel"><h2>Connect your reporting tool</h2><p>Configure the SurStor reporting bridge with <code>SURSTOR_USAGE_URL=https://www.surstor.net</code> and your API key as <code>SURSTOR_USAGE_DEVICE_TOKEN</code>. Usage appears after your tool reports a request.</p><p>Each workspace has one API key. Creating a new one immediately replaces the old one.</p><div className="usage-filters"><button disabled={busy} onClick={()=>device(true)}>Create or replace API key</button><button disabled={busy} onClick={()=>device(false)}>Revoke API key</button></div><p role="status">{deviceMessage}</p>{key && <div className="usage-filters usage-key-row">
-      <label htmlFor="usage-api-key">API key</label>
-      <input id="usage-api-key" readOnly spellCheck={false} value={key} onFocus={e=>e.target.select()}/>
-      <button type="button" onClick={copyKey}>Copy</button>
-      <button type="button" onClick={()=>{setKey('');setDeviceMessage('')}}>Hide</button>
-    </div>}</section></>}
+    <div role="status">{error || (!data?'Loading your workspace…':data.groups.length?'':'No requests reported for this period. Connect your reporting tool below.')}</div>
+    {data && <><section className="usage-panel"><h2>Usage by model and tool</h2><div className="usage-scroll"><table><thead><tr>{['Provider / model','Tool','Requests','Known input tokens','Known output tokens'].map(s=><th key={s}>{s}</th>)}</tr></thead><tbody>{data.groups.map(g=><tr key={JSON.stringify([g.provider,g.model,g.tool])}><td>{g.provider} / {g.model}</td><td>{g.tool}</td><td>{g.requests}</td><td>{g.input?.toLocaleString()??'—'}</td><td>{g.output?.toLocaleString()??'—'}</td></tr>)}</tbody></table></div><p>A dash means no count was reported.</p></section>
+    <section className="usage-panel"><h2>Reported costs and estimates</h2><p>{data.unpriced} unpriced requests.</p>{data.costs.map(c=><p key={c.currency+c.kind}>{c.currency} {c.amount} · {c.kind==='estimated'?'Estimated':'Provider-reported'}</p>)}</section>
+    </>}
   </>
 }
 export default function PersonalUsage(){
@@ -72,34 +55,53 @@ export default function PersonalUsage(){
     }catch{if(current){setReady(true);setMessage('Personal usage is not available on this deployment yet.')}}}
     void init();return ()=>{current=false;stop?.();document.title=old}
   },[])
-  async function createWorkspace() {
+  const [register,setRegister]=useState(false)
+  const [email,setEmail]=useState('')
+  const [password,setPassword]=useState('')
+  const guest=Boolean(session?.user.is_anonymous)
+  const creating=register || guest
+  async function authenticate(e:React.FormEvent) {
+    e.preventDefault()
     if (!client || busy) return
     setBusy(true)
     setMessage('')
     try {
-      const {error} = await client.auth.signInAnonymously()
-      if (error) setMessage(error.status === 429
-        ? 'Too many workspaces were requested. Please try again later.'
-        : 'Could not create your workspace. Please try again.')
-    } catch {
-      setMessage('Could not reach SurStor. Check your connection and try again.')
-    } finally {
-      setBusy(false)
-    }
+      const credentials={email:email.trim(),password}
+      if (guest) {
+        const change=await client.auth.updateUser(credentials)
+        if(change.error) throw change.error
+        const login=await client.auth.signInWithPassword(credentials)
+        if(login.error) throw login.error
+      } else if (creating) {
+        const result=await client.auth.signUp(credentials)
+        if(result.error) throw result.error
+        if(!result.data.session) throw Error('Could not open your account. Try signing in.')
+      } else {
+        const result=await client.auth.signInWithPassword(credentials)
+        if(result.error) throw result.error
+      }
+      setPassword('')
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Could not complete sign-in. Please try again.')
+    } finally { setBusy(false) }
   }
   return <div className="usage-page">
     <header><Link to="/">SurStor</Link><Link to="/dashboard">Sample dashboard</Link></header>
-    <main>
-      <p className="usage-kicker">SURSTOR / PERSONAL WORKSPACE</p>
-      <h1>My usage</h1>
-      {!ready ? <p>Loading your workspace…</p> : client && (session
-        ? <Workspace key={session.user.id} client={client}/>
-        : <section className="usage-panel">
-            <h2>Connect your agent or IDE</h2>
-            <p>Create a workspace, then generate an API key for your tool. Return in this browser to see its usage. Clearing site data removes your access to this workspace.</p>
-            <button disabled={busy} onClick={createWorkspace}>{busy ? 'Creating workspace…' : 'Create workspace'}</button>
-          </section>)}
+    <main><p className="usage-kicker">SURSTOR / PERSONAL WORKSPACE</p><h1>My usage</h1>
+      {!ready && <p>Loading your workspace…</p>}
+      {ready && client && (!session || guest) && <section className="usage-panel">
+        <h2>{guest ? 'Add a login to this workspace' : creating ? 'Create an account' : 'Sign in'}</h2>
+        {guest && <p>Add an email and password to keep your existing usage when you switch devices.</p>}
+        <form className="usage-filters usage-login" onSubmit={authenticate}>
+          <label>Email<input required type="email" autoComplete="username" value={email} onChange={e=>setEmail(e.target.value)}/></label>
+          <label>Password<input required type="password" minLength={creating ? 8 : undefined} autoComplete={creating ? 'new-password' : 'current-password'} value={password} onChange={e=>setPassword(e.target.value)}/></label>
+          <button disabled={busy}>{busy ? 'Please wait…' : guest ? 'Save login' : creating ? 'Create account' : 'Sign in'}</button>
+          {!guest && <button type="button" disabled={busy} onClick={()=>{setRegister(!register);setMessage('')}}>{creating ? 'Use existing account' : 'Create an account'}</button>}
+        </form></section>}
+      {client && session && <>
+        {!guest && <div className="usage-filters"><span>{session.user.email}</span><button onClick={async()=>{const result=await client.auth.signOut({scope:'local'});setMessage(result.error?'Could not sign out.':'')}}>Sign out</button></div>}
+        <Workspace key={session.user.id} client={client}/>
+      </>}
       <p role="status">{message}</p><UsageConnectionGuide/>
-    </main>
-  </div>
+    </main></div>
 }

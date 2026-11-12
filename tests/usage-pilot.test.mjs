@@ -13,6 +13,7 @@ test('two-account pilot, retry, revocation and database permissions', async()=>{
  await db.exec(await readFile(new URL('../supabase/migrations/202611100002_public_email_workspaces.sql',import.meta.url),'utf8'))
  await db.exec('alter table auth.users add column is_anonymous boolean default false')
  await db.exec(await readFile(new URL('../supabase/migrations/202611110001_browser_workspaces.sql',import.meta.url),'utf8'))
+ await db.exec(await readFile(new URL('../supabase/migrations/202611120001_password_reporting.sql',import.meta.url),'utf8'))
  const a=randomUUID(), b=randomUUID()
  await db.query("insert into auth.users values($1,null,null,true)",[a])
  await db.query("insert into auth.users values($1,'tester@example.invalid',now(),false)",[b])
@@ -36,5 +37,10 @@ test('two-account pilot, retry, revocation and database permissions', async()=>{
  await asUser(randomUUID());await assert.rejects(summary());await assert.rejects(db.query('select public.surstor_device(true)'))
  await asUser(a);await db.query('select public.surstor_device(false)');await db.exec('reset role;set role service_role');assert.equal(await ingest(event),401)
  await db.exec('reset role;set role anon');await assert.rejects(db.query('select public.surstor_open_workspace()'));await assert.rejects(summary());await assert.rejects(ingest(event))
+ const byOwner=async(id)=>(await db.query('select public.surstor_ingest_owner($1,$2::jsonb) status',[id,JSON.stringify(event)])).rows[0].status
+ await assert.rejects(byOwner(b))
+ await asUser(a);await assert.rejects(byOwner(b))
+ await db.exec('reset role;set role service_role')
+ assert.equal(await byOwner(a),401);assert.equal(await byOwner(b),201);assert.equal(await byOwner(b),200)
  }finally{await db.close()}
 })

@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto'
+import { sessionOwner } from '../lib-upload-session.js'
 const required=['event_id','version','occurred_at','provider','model','integration','usage_source','usage_status','input_tokens','output_tokens']
 const counts=['input_tokens','output_tokens','cache_read_tokens','cache_write_tokens']
 const fields=new Set([...required,...counts,'cost','project_id'])
@@ -18,7 +19,7 @@ export function valid(e) {
 export default async function handler(req,res) {
   res.setHeader('Cache-Control','private, no-store')
   if(req.method!=='POST') return res.status(405).end()
-  const match=/^Bearer ([0-9a-f]{64})$/.exec(req.headers.authorization || '')
+  const match=/^Bearer ([A-Za-z0-9._-]{1,256})$/.exec(req.headers.authorization || '')
   if(!match) return res.status(401).end()
   if(!/^application\/json(?:;|$)/i.test(req.headers['content-type']||'')) return res.status(415).end()
   if(Number(req.headers['content-length'])>16384) return res.status(413).end()
@@ -30,7 +31,13 @@ export default async function handler(req,res) {
   const headers={apikey:secret,'Content-Type':'application/json'}
   if(!secret.startsWith('sb_secret_')) headers.Authorization='Bearer '+secret
   try {
-    const response=await fetch(new URL('/rest/v1/rpc/surstor_ingest',process.env.SUPABASE_URL),{method:'POST',headers,redirect:'error',signal:AbortSignal.timeout(8000),body:JSON.stringify({device_digest:createHash('sha256').update(match[1]).digest('hex'),event})})
+    const token = match[1]
+    const legacy = /^[0-9a-f]{64}$/.test(token)
+    const owner = legacy ? null : sessionOwner(token, secret)
+    if (!legacy && !owner) return res.status(401).end()
+    const rpc = legacy ? 'surstor_ingest' : 'surstor_ingest_owner'
+    const args = legacy ? {device_digest:createHash('sha256').update(token).digest('hex'),event} : {account:owner,event}
+    const response=await fetch(new URL('/rest/v1/rpc/'+rpc,process.env.SUPABASE_URL),{method:'POST',headers,redirect:'error',signal:AbortSignal.timeout(8000),body:JSON.stringify(args)})
     if(!response.ok) return res.status(503).end()
     const code=await response.json()
     if(![200,201,401,409,429].includes(code)) return res.status(503).end()

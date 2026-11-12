@@ -2,15 +2,4 @@
 
 .usage-guide ol{list-style:decimal;padding-left:1.5rem}.usage-guide li,.usage-guide details,.usage-guide>p{margin-top:1rem}.usage-guide summary{cursor:pointer;color:#8be5bd}.usage-guide pre{overflow-x:auto;padding:1rem;background:#0b1d19;border-radius:6px}.usage-guide code{overflow-wrap:anywhere}.usage-guide li a{display:inline;margin:0}
 
-.usage-key-row { gap: 8px; align-items: center; }
-.usage-key-row label { flex-basis: 100%; }
-.usage-key-row input {
-  flex: 1 1 8rem;
-  min-width: 0;
-  padding: 10px 12px;
-  border: 1px solid #537868;
-  border-radius: 5px;
-  background: #fff;
-  color: #10271e;
-  font-family: monospace;
-}
+.usage-login input { padding: 10px 12px; border: 1px solid #537868; border-radius: 5px; background: #fff; color: #10271e; }
