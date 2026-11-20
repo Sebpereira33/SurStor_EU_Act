@@ -1,12 +1,12 @@
+import UploadTokens from '@/components/UploadTokens'
+import RecentUsage from '@/components/RecentUsage'
 import { useEffect, useState } from 'react'
 import { createClient, type Session, type SupabaseClient } from '@supabase/supabase-js'
 import { Link } from 'react-router'
 import './usage-dashboard.css'
 import UsageConnectionGuide from '@/components/UsageConnectionGuide'
-
 type Group = {model:string;provider:string;tool:string;requests:number;input:number|null;output:number|null}
 type Summary = {groups:Group[];costs:{currency:string;kind:string;amount:string}[];unpriced:number}
-
 function Workspace({client}:{client:SupabaseClient}) {
   const [days,setDays]=useState(30), [refresh,setRefresh]=useState(0)
   const [data,setData]=useState<Summary|null>(null), [error,setError]=useState('')
@@ -27,9 +27,10 @@ function Workspace({client}:{client:SupabaseClient}) {
     return ()=>{current=false}
   },[client,days,refresh])
   return <><section className="usage-filters"><label>Reporting period<select value={days} onChange={e=>setDays(+e.target.value)}><option value={7}>Last 7 days</option><option value={30}>Last 30 days</option></select></label><button onClick={()=>setRefresh(v=>v+1)}>Refresh usage</button></section>
-    <div role="status">{error || (!data?'Loading your workspace…':data.groups.length?'':'No requests reported for this period. Connect your reporting tool below.')}</div>
-    {data && <><section className="usage-panel"><h2>Usage by model and tool</h2><div className="usage-scroll"><table><thead><tr>{['Provider / model','Tool','Requests','Known input tokens','Known output tokens'].map(s=><th key={s}>{s}</th>)}</tr></thead><tbody>{data.groups.map(g=><tr key={JSON.stringify([g.provider,g.model,g.tool])}><td>{g.provider} / {g.model}</td><td>{g.tool}</td><td>{g.requests}</td><td>{g.input?.toLocaleString()??'—'}</td><td>{g.output?.toLocaleString()??'—'}</td></tr>)}</tbody></table></div><p>A dash means no count was reported.</p></section>
-    <section className="usage-panel"><h2>Reported costs and estimates</h2><p>{data.unpriced} unpriced requests.</p>{data.costs.map(c=><p key={c.currency+c.kind}>{c.currency} {c.amount} · {c.kind==='estimated'?'Estimated':'Provider-reported'}</p>)}</section>
+    <div role="status">{error || (!data?'Loading your workspaceâ€¦':data.groups.length?'':'No requests reported for this period. Connect your reporting tool below.')}</div>
+    {data && <><section className="usage-panel"><h2>Usage by model and tool</h2><div className="usage-scroll"><table><thead><tr>{['Provider / model','Tool','Requests','Known input tokens','Known output tokens'].map(s=><th key={s}>{s}</th>)}</tr></thead><tbody>{data.groups.map(g=><tr key={JSON.stringify([g.provider,g.model,g.tool])}><td>{g.provider} / {g.model}</td><td>{g.tool}</td><td>{g.requests}</td><td>{g.input?.toLocaleString()??'â€”'}</td><td>{g.output?.toLocaleString()??'â€”'}</td></tr>)}</tbody></table></div><p>A dash means no count was reported.</p></section>
+    <section className="usage-panel"><h2>Reported costs and estimates</h2><p>{data.unpriced} unpriced requests.</p>{data.costs.map(c=><p key={c.currency+c.kind}>{c.currency} {c.amount} Â· {c.kind==='estimated'?'Estimated':'Provider-reported'}</p>)}</section>
+    <RecentUsage client={client} refresh={refresh} onDelete={()=>setRefresh(v=>v+1)}/>
     </>}
   </>
 }
@@ -86,22 +87,23 @@ export default function PersonalUsage(){
     } finally { setBusy(false) }
   }
   return <div className="usage-page">
-    <header><Link to="/">SurStor</Link><Link to="/dashboard">Sample dashboard</Link></header>
+    <header><Link to="/">SurStor</Link><Link to="/dashboard">View sample data</Link></header>
     <main><p className="usage-kicker">SURSTOR / PERSONAL WORKSPACE</p><h1>My usage</h1>
-      {!ready && <p>Loading your workspace…</p>}
+      {!ready && <p>Loading your workspaceâ€¦</p>}
       {ready && client && (!session || guest) && <section className="usage-panel">
         <h2>{guest ? 'Add a login to this workspace' : creating ? 'Create an account' : 'Sign in'}</h2>
         {guest && <p>Add an email and password to keep your existing usage when you switch devices.</p>}
         <form className="usage-filters usage-login" onSubmit={authenticate}>
           <label>Email<input required type="email" autoComplete="username" value={email} onChange={e=>setEmail(e.target.value)}/></label>
           <label>Password<input required type="password" minLength={creating ? 8 : undefined} autoComplete={creating ? 'new-password' : 'current-password'} value={password} onChange={e=>setPassword(e.target.value)}/></label>
-          <button disabled={busy}>{busy ? 'Please wait…' : guest ? 'Save login' : creating ? 'Create account' : 'Sign in'}</button>
+          <button disabled={busy}>{busy ? 'Please waitâ€¦' : guest ? 'Save login' : creating ? 'Create account' : 'Sign in'}</button>
           {!guest && <button type="button" disabled={busy} onClick={()=>{setRegister(!register);setMessage('')}}>{creating ? 'Use existing account' : 'Create an account'}</button>}
         </form></section>}
       {client && session && <>
         {!guest && <div className="usage-filters"><span>{session.user.email}</span><button onClick={async()=>{const result=await client.auth.signOut({scope:'local'});setMessage(result.error?'Could not sign out.':'')}}>Sign out</button></div>}
-        <Workspace key={session.user.id} client={client}/>
-      </>}
+        <UploadTokens client={client}/><Workspace key={session.user.id} client={client}/>
+
+    </>}
       <p role="status">{message}</p><UsageConnectionGuide/>
     </main></div>
 }

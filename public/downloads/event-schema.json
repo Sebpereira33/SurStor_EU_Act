@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "event_id",
+    "occurred_at",
+    "provider",
+    "model",
+    "integration",
+    "usage_source",
+    "usage_status",
+    "input_tokens",
+    "output_tokens"
+  ],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1
+    },
+    "event_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "project_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "occurred_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timezone required; up to six fractional digits; at most five minutes in the future."
+    },
+    "provider": {
+      "type": "string",
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "model": {
+      "type": "string",
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "integration": {
+      "type": "string",
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "usage_source": {
+      "type": "string",
+      "enum": [
+        "harness_event",
+        "inference_server",
+        "manual",
+        "provider_response"
+      ]
+    },
+    "usage_status": {
+      "type": "string",
+      "enum": [
+        "estimated",
+        "incomplete",
+        "reported",
+        "unknown"
+      ]
+    },
+    "input_tokens": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1000000000,
+      "description": "Includes cache reads and writes; their sum cannot exceed this count."
+    },
+    "output_tokens": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1000000000
+    },
+    "cache_read_tokens": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1000000000
+    },
+    "cache_write_tokens": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1000000000
+    },
+    "cost": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "amount",
+        "currency",
+        "kind",
+        "pricing_version"
+      ],
+      "properties": {
+        "amount": {
+          "type": "string",
+          "pattern": "^[0-9]{1,9}(\\.[0-9]{1,6})?$"
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "kind": {
+          "enum": [
+            "estimated",
+            "provider_reported"
+          ]
+        },
+        "pricing_version": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 128
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "usage_status": {
+            "const": "reported"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "input_tokens": {
+            "type": "integer"
+          },
+          "output_tokens": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "usage_status": {
+            "const": "unknown"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "input_tokens": {
+            "type": "null"
+          },
+          "output_tokens": {
+            "type": "null"
+          },
+          "cache_read_tokens": {
+            "type": "null"
+          },
+          "cache_write_tokens": {
+            "type": "null"
+          }
+        }
+      }
+    }
+  ]
+}

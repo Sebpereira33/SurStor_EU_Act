@@ -14,6 +14,7 @@ test('two-account pilot, retry, revocation and database permissions', async()=>{
  await db.exec('alter table auth.users add column is_anonymous boolean default false')
  await db.exec(await readFile(new URL('../supabase/migrations/202611110001_browser_workspaces.sql',import.meta.url),'utf8'))
  await db.exec(await readFile(new URL('../supabase/migrations/202611120001_password_reporting.sql',import.meta.url),'utf8'))
+ await db.exec(await readFile(new URL('../supabase/migrations/202611200001_onboarding.sql',import.meta.url),'utf8'))
  const a=randomUUID(), b=randomUUID()
  await db.query("insert into auth.users values($1,null,null,true)",[a])
  await db.query("insert into auth.users values($1,'tester@example.invalid',now(),false)",[b])
@@ -42,5 +43,29 @@ test('two-account pilot, retry, revocation and database permissions', async()=>{
  await asUser(a);await assert.rejects(byOwner(b))
  await db.exec('reset role;set role service_role')
  assert.equal(await byOwner(a),401);assert.equal(await byOwner(b),201);assert.equal(await byOwner(b),200)
+
+ await asUser(b)
+ const token=(await db.query("select public.surstor_create_token('test-device') token")).rows[0].token
+ const digest=createHash('sha256').update(token).digest('hex')
+ const devices=(await db.query('select public.surstor_tokens() list')).rows[0].list
+ assert.equal(devices.length,1);assert.equal(devices[0].name,'test-device')
+ await assert.rejects(db.query('select public.surstor_check_token($1)',[digest]))
+ await asUser(a);assert.deepEqual((await db.query('select public.surstor_tokens() list')).rows[0].list,[])
+ await db.query('select public.surstor_revoke_token($1)',[devices[0].id])
+ await db.exec('reset role;set role service_role')
+ assert.equal((await db.query('select public.surstor_check_token($1) ok',[digest])).rows[0].ok,true)
+ const deviceIngest=async(e)=>(await db.query('select public.surstor_ingest($1,$2::jsonb) status',[digest,JSON.stringify(e)])).rows[0].status
+ assert.equal(await deviceIngest({...event,cache_read_tokens:null,cache_write_tokens:null}),200)
+ assert.equal(await deviceIngest({...event,output_tokens:99}),409)
+ await asUser(a)
+ assert.equal((await db.query('select public.surstor_delete_event($1) ok',[event.event_id])).rows[0].ok,true)
+ await asUser(b)
+ assert.equal((await db.query('select public.surstor_recent_events() list')).rows[0].list.length,1)
+ assert.equal((await db.query('select public.surstor_delete_event($1) ok',[event.event_id])).rows[0].ok,true)
+ assert.deepEqual((await summary()).groups,[])
+ await db.query('select public.surstor_revoke_token($1)',[devices[0].id])
+ await db.exec('reset role;set role service_role')
+ assert.equal((await db.query('select public.surstor_check_token($1) ok',[digest])).rows[0].ok,false)
+ assert.equal(await deviceIngest(event),401)
  }finally{await db.close()}
 })
