@@ -15,6 +15,7 @@ test('two-account pilot, retry, revocation and database permissions', async()=>{
  await db.exec(await readFile(new URL('../supabase/migrations/202611110001_browser_workspaces.sql',import.meta.url),'utf8'))
  await db.exec(await readFile(new URL('../supabase/migrations/202611120001_password_reporting.sql',import.meta.url),'utf8'))
  await db.exec(await readFile(new URL('../supabase/migrations/202611200001_onboarding.sql',import.meta.url),'utf8'))
+ await db.exec(await readFile(new URL('../supabase/migrations/202611250001_model_costs.sql',import.meta.url),'utf8'))
  const a=randomUUID(), b=randomUUID()
  await db.query("insert into auth.users values($1,null,null,true)",[a])
  await db.query("insert into auth.users values($1,'tester@example.invalid',now(),false)",[b])
@@ -63,6 +64,19 @@ test('two-account pilot, retry, revocation and database permissions', async()=>{
  assert.equal((await db.query('select public.surstor_recent_events() list')).rows[0].list.length,1)
  assert.equal((await db.query('select public.surstor_delete_event($1) ok',[event.event_id])).rows[0].ok,true)
  assert.deepEqual((await summary()).groups,[])
+ await db.exec('reset role;set role service_role')
+ for(const [currency,kind,amount] of [['USD','provider_reported','0.1'],['USD','provider_reported','0.2'],['USD','estimated','0.4'],['EUR','provider_reported','0.5']]) {
+   assert.equal(await deviceIngest({...event,event_id:randomUUID(),cost:{currency,kind,amount,pricing_version:kind==='estimated'?'test':null}}),201)
+ }
+ await asUser(b)
+ const chart=(await summary()).model_costs
+ assert.equal(chart.length,3)
+ assert.equal(chart.find(c=>c.currency==='USD'&&c.kind==='provider_reported').amount,'0.3')
+ assert.equal(chart.find(c=>c.currency==='USD'&&c.kind==='estimated').amount,'0.4')
+ assert.equal(chart.find(c=>c.currency==='EUR').amount,'0.5')
+ await asUser(a);assert.deepEqual((await summary()).model_costs,[])
+ await asUser(b)
+
  await db.query('select public.surstor_revoke_token($1)',[devices[0].id])
  await db.exec('reset role;set role service_role')
  assert.equal((await db.query('select public.surstor_check_token($1) ok',[digest])).rows[0].ok,false)

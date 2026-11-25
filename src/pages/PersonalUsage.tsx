@@ -1,3 +1,4 @@
+import ModelUsageChart, { type ModelCost } from '@/components/ModelUsageChart'
 import UploadTokens from '@/components/UploadTokens'
 import RecentUsage from '@/components/RecentUsage'
 import { useEffect, useState } from 'react'
@@ -6,7 +7,7 @@ import { Link } from 'react-router'
 import './usage-dashboard.css'
 import UsageConnectionGuide from '@/components/UsageConnectionGuide'
 type Group = {model:string;provider:string;tool:string;requests:number;input:number|null;output:number|null}
-type Summary = {groups:Group[];costs:{currency:string;kind:string;amount:string}[];unpriced:number}
+type Summary = {groups:Group[];model_costs?:ModelCost[];costs:{currency:string;kind:string;amount:string}[];unpriced:number}
 function Workspace({client}:{client:SupabaseClient}) {
   const [days,setDays]=useState(30), [refresh,setRefresh]=useState(0)
   const [data,setData]=useState<Summary|null>(null), [error,setError]=useState('')
@@ -28,7 +29,7 @@ function Workspace({client}:{client:SupabaseClient}) {
   },[client,days,refresh])
   return <><section className="usage-filters"><label>Reporting period<select value={days} onChange={e=>setDays(+e.target.value)}><option value={7}>Last 7 days</option><option value={30}>Last 30 days</option></select></label><button onClick={()=>setRefresh(v=>v+1)}>Refresh usage</button></section>
     <div role="status">{error || (!data?'Loading your workspace…':data.groups.length?'':'No requests reported for this period. Connect your reporting tool below.')}</div>
-    {data && <><section className="usage-panel"><h2>Usage by model and tool</h2><div className="usage-scroll"><table><thead><tr>{['Provider / model','Tool','Requests','Known input tokens','Known output tokens'].map(s=><th key={s}>{s}</th>)}</tr></thead><tbody>{data.groups.map(g=><tr key={JSON.stringify([g.provider,g.model,g.tool])}><td>{g.provider} / {g.model}</td><td>{g.tool}</td><td>{g.requests}</td><td>{g.input?.toLocaleString()??'—'}</td><td>{g.output?.toLocaleString()??'—'}</td></tr>)}</tbody></table></div><p>A dash means no count was reported.</p></section>
+    {data && <><ModelUsageChart groups={data.groups} costs={data.model_costs??[]} unpriced={data.unpriced}/><section className="usage-panel"><h2>Usage by model and tool</h2><div className="usage-scroll"><table><thead><tr>{['Provider / model','Tool','Requests','Known input tokens','Known output tokens'].map(s=><th key={s}>{s}</th>)}</tr></thead><tbody>{data.groups.map(g=><tr key={JSON.stringify([g.provider,g.model,g.tool])}><td>{g.provider} / {g.model}</td><td>{g.tool}</td><td>{g.requests}</td><td>{g.input?.toLocaleString()??'—'}</td><td>{g.output?.toLocaleString()??'—'}</td></tr>)}</tbody></table></div><p>A dash means no count was reported.</p></section>
     <section className="usage-panel"><h2>Reported costs and estimates</h2><p>{data.unpriced} unpriced requests.</p>{data.costs.map(c=><p key={c.currency+c.kind}>{c.currency} {c.amount} · {c.kind==='estimated'?'Estimated':'Provider-reported'}</p>)}</section>
     <RecentUsage client={client} refresh={refresh} onDelete={()=>setRefresh(v=>v+1)}/>
     </>}
